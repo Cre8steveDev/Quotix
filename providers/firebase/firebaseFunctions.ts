@@ -25,25 +25,25 @@ export const signUp = async (
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
-      email,
+      email.toLowerCase(),
       password
     );
     const user = userCredential.user;
 
-    // Create a user document in Firestore
+    // Create a user document in Firestore with additional fields
     await setDoc(doc(firestore, 'users', user.uid), {
       fullName,
       email: user.email,
+      userId: user.uid,
       savedQuotes: [],
     });
 
-    await setUser(user);
+    // Store Basic User Details to App Context for global Access
+    const { uid, email: _email, photoURL } = userCredential.user;
+    await setUser({ uid, email: _email, photoURL });
 
-    // console.log('User signed up successfully');
     return { success: true, message: 'User signed up successfully 😆' };
   } catch (error: any) {
-    // console.error('Error signing up:', error);
-    console.error(error);
     return { success: false, message: error?.message };
   }
 };
@@ -60,8 +60,11 @@ export const signIn = async (
       email,
       password
     );
-    await setUser(userCredential.user);
-    // console.log('User signed in successfully');
+
+    // Store Basic User Details to App Context for global Access
+    const { uid, email: _email, photoURL } = userCredential.user;
+    await setUser({ uid, email: _email, photoURL });
+
     return { success: true, message: 'Login successful' };
   } catch (error) {
     console.log(error);

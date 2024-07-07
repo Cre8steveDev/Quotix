@@ -55,6 +55,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     await persistState(newFilteredState);
   };
 
+  // Persist the userData to local storage
   const setUser = async (user: any | null) => {
     const newState = { ...state, user };
     setState(newState);

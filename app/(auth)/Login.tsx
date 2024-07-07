@@ -5,7 +5,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  TextInput,
   KeyboardAvoidingView,
   Platform,
   Alert,
@@ -14,7 +13,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Colors from '@/constants/Colors';
 import Logo from '@/constants/Logo';
 
@@ -25,6 +24,9 @@ import CustomPasswordInput from '@/components/ui/CustomPasswordInput';
 import CustomSubmitBtn from '../../components/ui/CustomSubmitBtn';
 import { Ionicons } from '@expo/vector-icons';
 import blurhash from '@/constants/BlurHash';
+import { signIn } from '@/providers/firebase/firebaseFunctions';
+import { useAppContext } from '@/providers/context/AppContext';
+import useAuthState from '@/providers/firebase/useAuthState';
 
 const initialFormData: LoginFormData = {
   email: '',
@@ -33,38 +35,53 @@ const initialFormData: LoginFormData = {
 
 const LoginScreen = () => {
   const router = useRouter();
+  const { setUser } = useAppContext();
 
   //   Define state to hold form values
   const [formData, setFormData] = useState<LoginFormData>(initialFormData);
   const [formError, setFormError] = useState({
     emailError: false,
-    fullNameError: false,
     passwordError: false,
   });
   const [loading, setLoading] = useState(false);
 
-  //   Handle Form Submission
-  const handleSubmitForm = () => {
+  // Redirect user from the Screen If already Signed in
+  // This is checking the authentication status
+  const { userAuthState } = useAuthState();
+  useEffect(() => {
+    if (userAuthState) {
+      router.dismissAll();
+      router.replace('/(tabs)/Home');
+    }
+  }, [userAuthState]);
+
+  //   Handle Login Form Submission
+  const handleSubmitForm = async () => {
     try {
       setLoading(true);
-      console.warn('Form Submitted');
-      router.replace('/(tabs)/Home');
-    } catch (error) {
-      console.warn(error);
+      const response = await signIn(
+        formData.email.toLowerCase(),
+        formData.password,
+        setUser
+      );
+
+      if (!response.success) throw new Error(response.message);
+    } catch (error: any) {
+      Alert.alert('An Error Occured 🤔', error.message);
     } finally {
       setLoading(false);
     }
   };
+
   //   Handle Google Auth Submission
   const handleGoogleAuth = () => {
     try {
       setLoading(true);
       console.warn('GoogleAuth Processed');
-      router.replace('/(tabs)/Home');
+      router.push('/(tabs)/Home');
     } catch (error) {
       console.warn(error);
     } finally {
-      setLoading(false);
     }
   };
 
@@ -141,7 +158,8 @@ const LoginScreen = () => {
             text={loading ? 'Processing' : 'Sign In With Google'}
             textColor={'white'}
             bgColor={Colors.googleBlue}
-            onPress={() => handleGoogleAuth()}
+            // onPress={() => handleGoogleAuth()}
+            onPress={() => Alert.alert('Feature Coming soon...')}
             children={
               <Ionicons
                 name="logo-google"

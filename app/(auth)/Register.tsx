@@ -14,7 +14,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Colors from '@/constants/Colors';
 import Logo from '@/constants/Logo';
 
@@ -28,6 +28,7 @@ import blurhash from '@/constants/BlurHash';
 
 import { signUp } from '@/providers/firebase/firebaseFunctions';
 import { useAppContext } from '@/providers/context/AppContext';
+import useAuthState from '@/providers/firebase/useAuthState';
 
 const initialFormData: RegisterFormData = {
   fullName: '',
@@ -39,6 +40,16 @@ const RegisterScreen = () => {
   // Instantiate router and setUser for the app context
   const router = useRouter();
   const { setUser } = useAppContext();
+
+  // Redirect user from the Screen If already Signed in
+  // This is checking the authentication status
+  const { userAuthState } = useAuthState();
+  useEffect(() => {
+    if (userAuthState) {
+      router.dismissAll();
+      router.replace('/(tabs)/Home');
+    }
+  }, [userAuthState]);
 
   //   Define state to hold form values
   const [formData, setFormData] = useState<RegisterFormData>(initialFormData);
@@ -61,7 +72,6 @@ const RegisterScreen = () => {
     if (!allFieldsFilled) return;
     try {
       setLoading(true);
-      // console.warn('Form Submitted');
 
       // Make Call to sign Up user
       const response = await signUp(
@@ -75,9 +85,8 @@ const RegisterScreen = () => {
       // Check if the signUp action was successful
       // Then navigate to the home page
       setLoading(false);
-      router.replace('/(tabs)/Home');
-    } catch (error) {
-      console.warn(error);
+    } catch (error: any) {
+      Alert.alert('An Error Occured 🥲', error?.message);
       setLoading(false);
     }
   };
@@ -180,7 +189,8 @@ const RegisterScreen = () => {
             text={loading ? 'Processing' : 'Sign In With Google'}
             textColor={'white'}
             bgColor={Colors.googleBlue}
-            onPress={() => handleGoogleAuth()}
+            // onPress={() => handleGoogleAuth()}
+            onPress={() => Alert.alert('Feature Coming soon...')}
             children={
               <Ionicons
                 name="logo-google"

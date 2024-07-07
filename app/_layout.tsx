@@ -6,10 +6,16 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import 'react-native-reanimated';
+
+// Import modules for authState
+import { auth } from '@/providers/firebase/firebaseConfig';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { useAppContext } from '../providers/context/AppContext';
+import { View, ActivityIndicator } from 'react-native';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -64,7 +70,3 @@ function RootLayoutNav() {
     </AppProvider>
   );
 }
-
-// function MainNavigator (){
-//   useEffect(()=>{}, [])
-// }

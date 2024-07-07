@@ -10,17 +10,6 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { getFirestore } from 'firebase/firestore';
-import { getDatabase } from 'firebase/database';
-
-// Firebase configuration
-// const firebaseConfig = {
-//   apiKey: 'AIzaSyDxx8ZfLgXpNKkepUKYh71y_JtKTuFaMgo',
-//   authDomain: 'quotix-9324d.firebaseapp.com',
-//   projectId: 'quotix-9324d',
-//   storageBucket: 'quotix-9324d.appspot.com',
-//   messagingSenderId: '414067682739',
-//   appId: '1:414067682739:web:04bc5bc029e78a162bafc6',
-// };
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_APIKEY,
@@ -40,15 +29,11 @@ if (!getApps().length) {
   app = getApp();
 }
 
-// Initialize Auth only if it hasn't been initialized yet
-let auth: Auth;
-try {
-  auth = getAuth(app);
-} catch {
-  auth = initializeAuth(app, {
-    persistence: getReactNativePersistence(AsyncStorage),
-  });
-}
+// Initialize authentication on the app instance
+//
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
 
 // Initialize Firestore only if it hasn't been initialized yet
 const firestore = getFirestore(app);

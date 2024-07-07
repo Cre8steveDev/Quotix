@@ -2,9 +2,14 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '@/constants/Colors';
+import { useAppContext } from '@/providers/context/AppContext';
+import { auth } from '@/providers/firebase/firebaseConfig';
 
 const Random = () => {
-  const user = null;
+  // const { state } = useAppContext();
+  // const user = state.user;
+  const user = auth.currentUser;
+
   if (!user) {
     return (
       <SafeAreaView style={styles.loading}>
