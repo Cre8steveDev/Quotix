@@ -61,9 +61,19 @@ export const signIn = async (
       password
     );
 
-    // Store Basic User Details to App Context for global Access
     const { uid, email: _email, photoURL } = userCredential.user;
-    await setUser({ uid, email: _email, photoURL });
+    let userName = '';
+    // Retrieve user data (name) from Firebase Database
+    const userDocRef = doc(firestore, 'users', uid);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+      const { fullName } = userDocSnap.data();
+      userName = fullName;
+    }
+
+    // Store Basic User Details to App Context for global Access
+    await setUser({ uid, email: _email, photoURL, userName });
 
     return { success: true, message: 'Login successful' };
   } catch (error) {

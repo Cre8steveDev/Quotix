@@ -2,10 +2,9 @@ import { useRouter } from 'expo-router';
 import { logoutUser } from '@/providers/firebase/firebaseFunctions';
 
 import { useEffect } from 'react';
-import { SafeAreaView, ActivityIndicator, Alert } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { Text, StyleSheet } from 'react-native';
 import { useAppContext } from '@/providers/context/AppContext';
+import ActivityIndicatorComp from '@/components/ActivityIndicatorComp';
+import { Alert } from 'react-native';
 
 const LogOutRoute = () => {
   const router = useRouter();
@@ -26,38 +25,7 @@ const LogOutRoute = () => {
   }, [setUser, router]);
 
   // Return Activity indicator while logout process ongoing
-  return (
-    <SafeAreaView style={styles.loading}>
-      <ActivityIndicator
-        size="large"
-        color={Colors.primaryYellow}
-        style={styles.indicator}
-      />
-      <Text>Logging out...</Text>
-    </SafeAreaView>
-  );
+  return <ActivityIndicatorComp />;
 };
 
 export default LogOutRoute;
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: Colors.primaryYellow,
-  },
-
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-
-  loading: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  indicator: {
-    transform: 'scale(1.3)',
-    marginBottom: 10,
-  },
-});

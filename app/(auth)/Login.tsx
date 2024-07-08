@@ -13,7 +13,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Colors from '@/constants/Colors';
 import Logo from '@/constants/Logo';
 
@@ -26,7 +26,6 @@ import { Ionicons } from '@expo/vector-icons';
 import blurhash from '@/constants/BlurHash';
 import { signIn } from '@/providers/firebase/firebaseFunctions';
 import { useAppContext } from '@/providers/context/AppContext';
-import useAuthState from '@/providers/firebase/useAuthState';
 
 const initialFormData: LoginFormData = {
   email: '',
@@ -44,16 +43,6 @@ const LoginScreen = () => {
     passwordError: false,
   });
   const [loading, setLoading] = useState(false);
-
-  // Redirect user from the Screen If already Signed in
-  // This is checking the authentication status
-  const { userAuthState } = useAuthState();
-  useEffect(() => {
-    if (userAuthState) {
-      router.dismissAll();
-      router.replace('/(tabs)/Home');
-    }
-  }, [userAuthState]);
 
   //   Handle Login Form Submission
   const handleSubmitForm = async () => {

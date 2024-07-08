@@ -62,3 +62,15 @@ export type AppContextProps = {
   removeQuoteFromLocalState: (quote: savedQuotesProp) => Promise<void>;
   setUser: (user: any | null) => Promise<void>;
 };
+
+export type SearchBarProp = {
+  searchText: string;
+  setsearchText: (text: string) => void;
+  searchAction: (text: string) => void;
+};
+
+export type SkeletonLoaderProp = {
+  width: number | string;
+  height: number | string;
+  style?: { [key: string]: any };
+};

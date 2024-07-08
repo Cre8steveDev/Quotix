@@ -14,7 +14,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Colors from '@/constants/Colors';
 import Logo from '@/constants/Logo';
 
@@ -28,7 +28,6 @@ import blurhash from '@/constants/BlurHash';
 
 import { signUp } from '@/providers/firebase/firebaseFunctions';
 import { useAppContext } from '@/providers/context/AppContext';
-import useAuthState from '@/providers/firebase/useAuthState';
 
 const initialFormData: RegisterFormData = {
   fullName: '',
@@ -40,16 +39,7 @@ const RegisterScreen = () => {
   // Instantiate router and setUser for the app context
   const router = useRouter();
   const { setUser } = useAppContext();
-
-  // Redirect user from the Screen If already Signed in
-  // This is checking the authentication status
-  const { userAuthState } = useAuthState();
-  useEffect(() => {
-    if (userAuthState) {
-      router.dismissAll();
-      router.replace('/(tabs)/Home');
-    }
-  }, [userAuthState]);
+  const [loading, setLoading] = useState(false);
 
   //   Define state to hold form values
   const [formData, setFormData] = useState<RegisterFormData>(initialFormData);
@@ -58,7 +48,6 @@ const RegisterScreen = () => {
     fullNameError: false,
     passwordError: false,
   });
-  const [loading, setLoading] = useState(false);
 
   //   Handle Form Submission
   const handleSubmitForm = async () => {

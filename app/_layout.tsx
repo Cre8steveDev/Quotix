@@ -1,21 +1,17 @@
+import 'react-native-gesture-handler';
+
 import { AppProvider } from '@/providers/context/AppContext';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from '@react-navigation/native';
+// import {
+//   DarkTheme,
+//   DefaultTheme,
+//   ThemeProvider,
+// } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
-
-// Import modules for authState
-import { auth } from '@/providers/firebase/firebaseConfig';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { useAppContext } from '../providers/context/AppContext';
-import { View, ActivityIndicator } from 'react-native';
 
 export {
   // Catch any errors thrown by the Layout component.

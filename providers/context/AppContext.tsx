@@ -17,7 +17,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     loadPersistedState();
   }, []);
 
-  //   Define load Persisted STate Function
+  //   Define load Persisted State Function
   const loadPersistedState = async () => {
     try {
       const persistedState = await AsyncStorage.getItem('appState');
@@ -29,6 +29,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  // Persist State helper function to save to local storage
   const persistState = async (newState: AppState) => {
     try {
       await AsyncStorage.setItem('appState', JSON.stringify(newState));
