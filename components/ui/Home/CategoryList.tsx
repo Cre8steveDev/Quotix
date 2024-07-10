@@ -27,7 +27,7 @@ const CategoryList = () => {
     axios
       .get(GET_ALL_TAGS)
       .then((response) => {
-        setLists(response.data.slice(0, 10));
+        setLists(response.data);
       })
       .catch((error) => {
         // setLists([]);
@@ -41,7 +41,7 @@ const CategoryList = () => {
       {/* Text heading */}
       <View style={styles.headingContainer}>
         <Text style={styles.headingText1}>Categories</Text>
-        <Text style={styles.headingText2}>View All</Text>
+        {/* <Text style={styles.headingText2}>View All</Text> */}
       </View>
 
       {/* Skeleton Loader for while loading  */}
@@ -71,12 +71,17 @@ const CategoryList = () => {
           )}
         />
       )}
+      {/* Text heading Top Ten Quotes */}
+      <View style={styles.headingContainer2}>
+        <Text style={styles.headingText1}>Ten Random Quotes</Text>
+      </View>
     </View>
   );
 };
 
 export default CategoryList;
 
+// Definition for the styles
 const styles = StyleSheet.create({
   skeleton: {
     backgroundColor: Colors.gray75,
@@ -85,14 +90,20 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.gray75,
     borderRadius: 5,
-    padding: 10,
+    padding: 6,
     marginRight: 8,
   },
   headingContainer: {
     justifyContent: 'space-between',
     alignContent: 'center',
     flexDirection: 'row',
-    marginTop: 20,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  headingContainer2: {
+    justifyContent: 'space-between',
+    alignContent: 'center',
+    flexDirection: 'row',
     marginBottom: 10,
   },
   headingText1: {

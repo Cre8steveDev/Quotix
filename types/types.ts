@@ -41,25 +41,25 @@ export type CustomSubmitBtnProp = {
   disabled?: boolean;
 };
 
-export type savedQuotesProp = {
-  _id: string;
-  content: string;
-  author: string;
-  tags: string[];
-  authorSlug: string;
-  length: number;
-};
+// export type savedQuotesProp = {
+//   _id: string;
+//   content: string;
+//   author: string;
+//   tags: string[];
+//   authorSlug: string;
+//   length: number;
+// };
 
 export type AppState = {
   user: any | null;
-  savedQuotes: savedQuotesProp[];
+  savedQuotes: QuotesData[];
 };
 
 export type AppContextProps = {
   state: AppState;
   setState: React.Dispatch<React.SetStateAction<AppState>>;
-  addQuoteToLocalState: (quote: savedQuotesProp) => Promise<void>;
-  removeQuoteFromLocalState: (quote: savedQuotesProp) => Promise<void>;
+  addQuoteToLocalState: (quote: QuotesData) => Promise<void>;
+  removeQuoteFromLocalState: (quote: QuotesData) => Promise<void>;
   setUser: (user: any | null) => Promise<void>;
 };
 
@@ -73,4 +73,12 @@ export type SkeletonLoaderProp = {
   width: number | string;
   height: number | string;
   style?: { [key: string]: any };
+};
+
+export type QuotesData = {
+  _id: string;
+  content: string;
+  author: string;
+  tags: string[];
+  index: number;
 };

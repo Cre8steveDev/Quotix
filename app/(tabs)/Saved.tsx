@@ -1,13 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import SavedQuotesTab from '../../components/ui/SavedQuotesTab';
 
 const Saved = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Text>Saved</Text>
-      </View>
+      <SavedQuotesTab />
     </SafeAreaView>
   );
 };
@@ -21,7 +20,6 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    // backgroundColor: 'white',
     padding: 20,
   },
 });

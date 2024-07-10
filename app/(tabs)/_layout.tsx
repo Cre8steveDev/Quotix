@@ -22,7 +22,7 @@ export default function TabLayout() {
         tabBarInactiveTintColor: '#FFFFFF',
         tabBarStyle: {
           height: 65,
-          width: '90%',
+          width: '93%',
           marginHorizontal: 'auto',
           marginBottom: 10,
           borderWidth: 3,

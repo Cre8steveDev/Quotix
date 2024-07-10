@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
     paddingRight: 4,
     flexDirection: 'row',
     marginTop: 20,
+    marginBottom: 5,
     width: '100%',
     overflow: 'hidden',
     borderRadius: 10,

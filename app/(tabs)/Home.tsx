@@ -5,7 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useAppContext } from '@/providers/context/AppContext';
 import LogoNameHeader from '@/components/ui/Home/LogoNameHeader';
 import SearchBar from '@/components/ui/Home/SearchBar';
-import CategoryList from '@/components/ui/Home/CategoryList';
+import TenRandomQuotesList from '../../components/ui/Home/TenRandomQuotes';
 
 const Home = () => {
   // Retrieve User Data from App Context
@@ -36,7 +36,9 @@ const Home = () => {
         />
 
         {/* Component that renders Category List */}
-        <CategoryList />
+
+        {/* Component that renders the Top Ten Routes */}
+        <TenRandomQuotesList />
       </View>
     </SafeAreaView>
   );

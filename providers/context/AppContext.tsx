@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppContextProps, AppState, savedQuotesProp } from '@/types/types';
+import { AppContextProps, AppState, QuotesData } from '@/types/types';
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
 
@@ -38,7 +38,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const addQuoteToLocalState = async (quote: savedQuotesProp) => {
+  // Store Selected Quote To Local Storage
+  const addQuoteToLocalState = async (quote: QuotesData) => {
     const newState = {
       ...state,
       savedQuotes: [...state.savedQuotes, quote],
@@ -47,7 +48,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     await persistState(newState);
   };
 
-  const removeQuoteFromLocalState = async (quote: savedQuotesProp) => {
+  // Remove Selected Quote From Local Storage
+  const removeQuoteFromLocalState = async (quote: QuotesData) => {
     const newFilteredState = {
       ...state,
       savedQuotes: state.savedQuotes.filter((q) => q !== quote),
