@@ -9,39 +9,40 @@ import QuotesCard from './QuotesCard';
 import { useAppContext } from '@/providers/context/AppContext';
 import ActivityIndicatorComp from '../ActivityIndicatorComp';
 import EmptyQuotesList from './EmptyQuotesList';
+import { getCurrentUserData } from '@/providers/firebase/firebaseFunctions';
 
 const SavedQuotesTab = () => {
-  const [quotes, setQuotes] = useState<QuotesData[] | null>(null);
+  // const [quotes, setQuotes] = useState<QuotesData[] | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { state } = useAppContext();
+  const { state, setState } = useAppContext();
   console.log(state.savedQuotes);
 
   useEffect(() => {
     setLoading(true);
 
     try {
-      // Retrieve Saved Quotes from Local Storage
-      if (!state.savedQuotes) setQuotes([]);
-      if (state.savedQuotes) setQuotes(state.savedQuotes);
       // Attempt to retrieve from remote DB
-
-      // Stop loading indicator
+      getCurrentUserData().then((res) => {
+        if (res) {
+          console.log('TaTATATATATTATATATATATAt');
+          setState((prev) => ({ ...prev, savedQuotes: res.savedQuotes }));
+        }
+      });
     } catch (error) {
-      setQuotes([]);
+      setState((prev) => ({ ...prev, savedQuotes: [] }));
       setError(true);
     } finally {
       setLoading(false);
-      console.log(quotes);
     }
-  }, [state.savedQuotes]);
+  }, []);
 
   // Return activity indicator while saved quotes loading
   if (loading) return <ActivityIndicatorComp text="Loading Saved Quotes..." />;
 
   // Return No Quotes have been saved Component
-  if (!state.savedQuotes || (quotes && quotes?.length <= 1))
+  if (state.savedQuotes.length === 0)
     return (
       <EmptyQuotesList
         title="Oops! 🤔"
@@ -51,23 +52,11 @@ const SavedQuotesTab = () => {
 
   return (
     <View style={styles.container}>
-      {/* Ten Skeleton Loaders For the Quotes  */}
-      {!quotes &&
-        !error &&
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
-          <SkeletonLoader
-            key={item}
-            width={'100%'}
-            height={165}
-            style={styles.skeleton}
-          />
-        ))}
-
       {/* Display the quotes  */}
-      {quotes && quotes.length > 1 && (
+      {state.savedQuotes.length > 0 && (
         <FlatList
           style={styles.listContainer}
-          data={quotes}
+          data={state.savedQuotes}
           showsVerticalScrollIndicator={false}
           extraData={null}
           numColumns={1}

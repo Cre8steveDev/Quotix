@@ -61,6 +61,7 @@ export type AppContextProps = {
   addQuoteToLocalState: (quote: QuotesData) => Promise<void>;
   removeQuoteFromLocalState: (quote: QuotesData) => Promise<void>;
   setUser: (user: any | null) => Promise<void>;
+  persistState: (newState: AppState) => Promise<void>;
 };
 
 export type SearchBarProp = {

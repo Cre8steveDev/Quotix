@@ -36,7 +36,7 @@ const QuotesCard = ({
     }
     // Store Quote to FireStore Database for remote access
     try {
-      const response = await addQuoteToFirestore(state.user.uid, quoteObj);
+      const response = await addQuoteToFirestore(state.user?.uid, quoteObj);
       if (!response.success) throw new Error();
     } catch (error) {
       useToast('Error Saving Quote to Remote Storage', '#ff6666', 'white');
@@ -47,17 +47,19 @@ const QuotesCard = ({
   const removeSavedQuote = async () => {
     if (!isAlreadySaved) return;
     try {
-      console.log('Removing from local State');
       await removeQuoteFromLocalState(quoteObj);
     } catch (error) {
       useToast('Error Removing Quote to Remote Storage', '#ff6666', 'white');
     }
     // Remove quote from FireStore Database
     try {
-      const response = await removeQuoteFromFirestore(state.user.uid, quoteObj);
+      const response = await removeQuoteFromFirestore(
+        state.user?.uid,
+        quoteObj
+      );
       if (!response.success) throw new Error();
     } catch (error) {
-      Alert.alert('Error Saving Quote to Remote Storage');
+      Alert.alert('Error Removing Quote from Remote Storage');
       console.log(error);
     }
   };

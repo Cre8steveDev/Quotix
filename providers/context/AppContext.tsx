@@ -14,7 +14,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Load persisted state when the app starts
   useEffect(() => {
-    loadPersistedState();
+    const loadFunction = async () => {
+      await loadPersistedState();
+    };
+
+    loadFunction();
   }, []);
 
   //   Define load Persisted State Function
@@ -22,7 +26,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const persistedState = await AsyncStorage.getItem('appState');
       if (persistedState) {
-        setState(JSON.parse(persistedState));
+        const mobileState = JSON.parse(persistedState) as AppState;
+
+        if (mobileState?.user) setState(mobileState);
       }
     } catch (error) {
       console.error('Error loading persisted state:', error);
@@ -58,7 +64,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     await persistState(newFilteredState);
   };
 
-  // Persist the userData to local storage
+  // Persist the userData to local storage and global state
   const setUser = async (user: any | null) => {
     const newState = { ...state, user };
     setState(newState);
@@ -73,6 +79,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         addQuoteToLocalState,
         removeQuoteFromLocalState,
         setUser,
+        persistState,
       }}
     >
       {children}

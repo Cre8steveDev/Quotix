@@ -6,10 +6,12 @@ import { useAppContext } from '@/providers/context/AppContext';
 import LogoNameHeader from '@/components/ui/Home/LogoNameHeader';
 import SearchBar from '@/components/ui/Home/SearchBar';
 import TenRandomQuotesList from '../../components/ui/Home/TenRandomQuotes';
+import { useRouter } from 'expo-router';
 
 const Home = () => {
   // Retrieve User Data from App Context
   const { state } = useAppContext();
+  const router = useRouter();
 
   // Set State for the search text input
   const [searchText, setSearchText] = useState('');
@@ -17,9 +19,10 @@ const Home = () => {
   // Handle Search
   const handleSearch = (text: string) => {
     if (searchText.length < 3) return;
-
-    Alert.alert('SEARCH BUTTON CLICKED');
+    const cleanText = searchText.trim().toLowerCase();
+    router.push(`/(tabs)/Random?search=${cleanText}`);
   };
+  console.log(state);
 
   return (
     <SafeAreaView style={styles.safeArea}>

@@ -34,7 +34,7 @@ const initialFormData: LoginFormData = {
 
 const LoginScreen = () => {
   const router = useRouter();
-  const { setUser } = useAppContext();
+  const { setUser, state } = useAppContext();
 
   //   Define state to hold form values
   const [formData, setFormData] = useState<LoginFormData>(initialFormData);
@@ -55,6 +55,8 @@ const LoginScreen = () => {
       );
 
       if (!response.success) throw new Error(response.message);
+
+      // Catch Errors
     } catch (error: any) {
       Alert.alert('An Error Occured 🤔', error.message);
     } finally {
@@ -131,7 +133,7 @@ const LoginScreen = () => {
             text={loading ? 'Processing...' : 'Log In'}
             textColor={Colors.darkGray}
             bgColor={Colors.primaryYellow}
-            onPress={() => handleSubmitForm()}
+            onPress={async () => await handleSubmitForm()}
             children={
               <Ionicons
                 name="person-add"

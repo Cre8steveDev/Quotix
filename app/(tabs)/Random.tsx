@@ -4,27 +4,27 @@ import {
   StyleSheet,
   Text,
   View,
+  RefreshControl,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '@/constants/Colors';
-import { useAppContext } from '@/providers/context/AppContext';
 import { auth } from '@/providers/firebase/firebaseConfig';
 import { useLocalSearchParams } from 'expo-router';
 import { QuotesData } from '@/types/types';
 import axios from 'axios';
-import { BASE_API } from '@/constants/ApiLinks';
 import QuotesCard from '@/components/ui/QuotesCard';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import ActivityIndicatorComp from '@/components/ActivityIndicatorComp';
 import EmptyQuotesList from '@/components/ui/EmptyQuotesList';
 import useToast from '@/components/ui/Toasts';
 
 const Random = () => {
   // Set State for updating Fetched Quotes
-  const [quotes, setQuotes] = useState<QuotesData[]>([]);
+  const [quotes, setQuotes] = useState<QuotesData[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [headingTitle, setHeadingTitle] = useState('Random Quotes Page');
+  const [refreshing, setRefreshing] = useState(false);
 
   // Get Authentication Status
   const user = auth.currentUser;
@@ -42,7 +42,39 @@ const Random = () => {
       </SafeAreaView>
     );
   }
+  // Fetch Quotes based on Tag
+  const handleFetchByTag = async () => {
+    const response = await axios.get(
+      `https://api.quotable.io/quotes/random?tags=${tag}&limit=20`
+    );
+    setQuotes(response.data);
+    setRefreshing(false);
+  };
+  // Fetch Random Quotes based on search query
+  const handleFetchBySearch = async () => {
+    const response = await axios.get(
+      `https://api.quotable.io/quotes/random?query=${search}&limit=20`
+    );
+    setQuotes(response.data);
+    setRefreshing(false);
+  };
+  // Fetch Random Data when no query params
+  const handleNormalFetch = async () => {
+    const response = await axios.get(
+      `https://api.quotable.io/quotes/random?limit=20`
+    );
+    setQuotes(response.data);
+    setRefreshing(false);
+  };
 
+  //  Handle Refresh of the list
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    if (tag) return await handleFetchByTag();
+    if (search) return await handleFetchBySearch();
+
+    return await handleNormalFetch();
+  };
   // Fetch Data based on what came in.
   useEffect(() => {
     setLoading(true);
@@ -50,47 +82,38 @@ const Random = () => {
     setQuotes([]);
 
     try {
-      // Fetch Quotes based on Tag
       if (tag) {
-        console.log(tag);
-        axios
-          .get(`https://api.quotable.io/quotes/random?tags=${tag}&limit=20`)
-          .then((res) => {
-            console.log(res.data);
-            setQuotes(res.data);
-          });
-      }
-      // Fetch Random Quotes based on search query
-      else if (search) {
-      }
-      // Fetch Random Data when no query params
-      else {
-        setQuotes([]);
+        setHeadingTitle(`Random Quotes by Tag: ${tag}`);
+        handleFetchByTag();
+      } else if (search) {
+        setHeadingTitle(`Search For: ${search}`);
+        handleFetchBySearch();
+      } else {
+        handleNormalFetch();
       }
     } catch (error) {
       useToast('An Error occured trying to fetch quotes.', 'red', 'white');
+      setError(true);
     } finally {
       setLoading(false);
     }
   }, [tag, search]);
 
   //  Return JSX to View
-  // Return activity indicator while saved quotes loading
-  if (loading) return <ActivityIndicatorComp text="Loading Quotes..." />;
+  // Return activity indicator while quotes loading
+  if (loading && quotes === null)
+    return <ActivityIndicatorComp text="Loading Quotes..." />;
 
   // Return No Quotes have been saved Component
-  if (quotes && quotes?.length < 1)
+  if ((quotes && quotes.length < 1) || error)
     return (
-      <EmptyQuotesList
-        title="Oops! 🤔"
-        message="You do not have any saved quotes at the moment. Explore the Home or Random Tab"
-      />
+      <EmptyQuotesList title="Errrm🤕" message="Nothing to Show here yet." />
     );
 
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <RandomQuotesHeader />
+        <RandomQuotesHeader heading={headingTitle} />
 
         {/* Display the quotes  */}
         {quotes && quotes.length > 1 && (
@@ -103,7 +126,7 @@ const Random = () => {
             initialNumToRender={10}
             keyExtractor={(item) => item._id}
             showsHorizontalScrollIndicator={false}
-            renderItem={({ item, index, separators }) => (
+            renderItem={({ item, index }) => (
               <QuotesCard
                 key={item._id}
                 _id={item._id}
@@ -113,6 +136,16 @@ const Random = () => {
                 index={index}
               />
             )}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={[Colors.primaryYellow, Colors.googleBlue]} // Android
+                tintColor={Colors.googleBlue} // iOS
+                title="Refreshing..." // iOS
+                titleColor={Colors.primaryYellow} // iOS
+              />
+            }
           />
         )}
       </View>
@@ -134,7 +167,7 @@ const styles = StyleSheet.create({
 
   headingText1: {
     fontFamily: 'PoppinsExtraBold',
-    fontSize: 32,
+    fontSize: 28,
     textAlign: 'center',
     marginTop: 10,
   },
@@ -161,13 +194,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const RandomQuotesHeader = () => {
+const RandomQuotesHeader = ({ heading }: { heading: string }) => {
   return (
     <View style={styles.headerContainer}>
-      <Text style={styles.headingText1}>Random Quotes Page</Text>
+      <Text style={styles.headingText1}>{heading}</Text>
       <Text style={styles.headingText2}>
-        Be inspired by quotes you saved previously. 😊
+        Be inspired by random quotes from great minds. 😊
       </Text>
+
+      <Text style={styles.headingText2}>Draw down to refresh.</Text>
     </View>
   );
 };

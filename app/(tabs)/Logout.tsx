@@ -5,19 +5,27 @@ import { useEffect } from 'react';
 import { useAppContext } from '@/providers/context/AppContext';
 import ActivityIndicatorComp from '@/components/ActivityIndicatorComp';
 import { Alert } from 'react-native';
+import useToast from '@/components/ui/Toasts';
 
 const LogOutRoute = () => {
   const router = useRouter();
-  const { setUser } = useAppContext();
+  const { setUser, state, setState, persistState } = useAppContext();
 
   // UseEffect to perform logout functionality on the route
   useEffect(() => {
     const performLogout = async () => {
       try {
         await logoutUser(setUser);
+        setState({ ...state, savedQuotes: [] });
+        await persistState({ user: null, savedQuotes: [] });
+
         router.replace('/');
       } catch (err) {
-        Alert.alert('Error Occured', 'Please try logging out again.');
+        useToast(
+          'Error Occured. Please try logging out again.',
+          'red',
+          'white'
+        );
       }
     };
 

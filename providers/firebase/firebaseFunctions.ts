@@ -40,7 +40,7 @@ export const signUp = async (
 
     // Store Basic User Details to App Context for global Access
     const { uid, email: _email, photoURL } = userCredential.user;
-    await setUser({ uid, email: _email, photoURL });
+    await setUser({ uid, email: _email, photoURL, userName: fullName });
 
     return { success: true, message: 'User signed up successfully 😆' };
   } catch (error: any) {
@@ -117,15 +117,38 @@ export const addQuoteToFirestore = async (
 // Remove selected quote from the database
 export const removeQuoteFromFirestore = async (
   userId: string,
-  quote: QuotesData
+  quoteToRemove: QuotesData
 ) => {
+  console.log('User ID:', userId);
+  console.log('Quote to remove:', quoteToRemove);
+
   try {
     const userRef = doc(firestore, 'users', userId);
+
+    // First, get the current user document
+    const userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+      throw new Error('User document not found');
+    }
+
+    const userData = userDoc.data();
+    const savedQuotes = userData.savedQuotes || [];
+
+    // Filter the selected Quote from the retrieved
+    // User Data
+    const newSavedQuotes = savedQuotes.filter(
+      (quote: QuotesData) => quote._id !== quoteToRemove._id
+    );
+
+    // Update the document with the new array
     await updateDoc(userRef, {
-      savedQuotes: arrayRemove(quote),
+      savedQuotes: newSavedQuotes,
     });
-    return { success: true, message: 'Quote successfully stored.' };
+
+    return { success: true, message: 'Quote successfully removed.' };
   } catch (error) {
+    console.error('Error removing quote:', error);
     return {
       success: false,
       message: 'Error removing selected quote from Database.',
