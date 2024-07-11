@@ -77,6 +77,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="Saved"
         options={{
@@ -91,6 +92,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="Profile"
         options={{
@@ -101,6 +103,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="Logout"
         options={{

@@ -42,6 +42,7 @@ const Random = () => {
       </SafeAreaView>
     );
   }
+
   // Fetch Quotes based on Tag
   const handleFetchByTag = async () => {
     const response = await axios.get(
