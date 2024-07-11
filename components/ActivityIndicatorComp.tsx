@@ -3,7 +3,7 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '@/constants/Colors';
 
-const ActivityIndicatorComp = () => {
+const ActivityIndicatorComp = ({ text }: { text: string }) => {
   return (
     <SafeAreaView style={styles.loading}>
       <ActivityIndicator
@@ -11,7 +11,7 @@ const ActivityIndicatorComp = () => {
         color={Colors.primaryYellow}
         style={styles.indicator}
       />
-      <Text>Logging out...</Text>
+      <Text>{text}</Text>
     </SafeAreaView>
   );
 };
@@ -19,11 +19,6 @@ const ActivityIndicatorComp = () => {
 export default ActivityIndicatorComp;
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: Colors.primaryYellow,
-  },
-
   container: {
     flex: 1,
     padding: 20,

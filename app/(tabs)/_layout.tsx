@@ -10,7 +10,7 @@ export default function TabLayout() {
 
   // If Auth State is Loading while user is on
   // This Layout, then return an Activity Indicator.
-  if (loading) return <ActivityIndicatorComp />;
+  if (loading) return <ActivityIndicatorComp text="" />;
 
   // If Auth State Change is not loading then
   // Return the tab views for the main page.

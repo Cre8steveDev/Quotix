@@ -1,9 +1,14 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
 import { QuotesData } from '@/types/types';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { useAppContext } from '@/providers/context/AppContext';
+import {
+  addQuoteToFirestore,
+  removeQuoteFromFirestore,
+} from '@/providers/firebase/firebaseFunctions';
+import Toasts from './Toasts';
 
 const QuotesCard = ({
   _id,
@@ -12,18 +17,56 @@ const QuotesCard = ({
   tags,
   index,
 }: QuotesData & { index: number }) => {
-  const { state } = useAppContext();
+  const { state, addQuoteToLocalState, removeQuoteFromLocalState } =
+    useAppContext();
 
   const alternating = index % 2 === 0;
   const isAlreadySaved = state.savedQuotes.find((quote) => quote._id === _id);
+  const quoteObj = { _id, content, author, tags, index };
 
   // Save Quote Function
-  const handleSaveQuote = () => {};
+  const handleSaveQuote = async () => {
+    // Store Quote to Local Storage
+    try {
+      await addQuoteToLocalState(quoteObj);
+    } catch (error) {
+      Alert.alert('Error Saving Quote to Local Storage');
+    }
+    // Store Quote to FireStore Database for remote access
+    try {
+      const response = await addQuoteToFirestore(state.user.uid, quoteObj);
+      if (!response.success) throw new Error();
+    } catch (error) {
+      Alert.alert('Error Saving Quote to Remote Storage');
+      console.log(error);
+    }
+  };
 
   // Remove Quote From Saved
-  const removeSavedQuote = () => {
+  const removeSavedQuote = async () => {
     if (!isAlreadySaved) return;
+    try {
+      console.log('Removing from local State');
+      await removeQuoteFromLocalState(quoteObj);
+    } catch (error) {
+      Alert.alert('Error Saving Quote to Local Storage');
+    }
+    // Remove quote from FireStore Database
+    try {
+      const response = await removeQuoteFromFirestore(state.user.uid, quoteObj);
+      if (!response.success) throw new Error();
+    } catch (error) {
+      Alert.alert('Error Saving Quote to Remote Storage');
+      console.log(error);
+    }
   };
+
+  // Copy the quote Content and Author to Clipboard
+  const handleCopyToClipBoard = () => {
+    console.log('Copied');
+  };
+
+  // Return JSX
   return (
     <View
       style={[
@@ -55,25 +98,38 @@ const QuotesCard = ({
       <View style={styles.actionContainer}>
         {/* Tag */}
         {tags.length >= 1 && <Text style={styles.tagContainer}>{tags[0]}</Text>}
-        <View>
-          {!isAlreadySaved && (
+        <View style={styles.saveContainer}>
+          {/* Copy Quote Content to Clip Board */}
+          <TouchableOpacity onPress={handleCopyToClipBoard}>
             <Ionicons
-              name="bookmark"
+              name="copy"
               style={styles.saveContainer}
               size={20}
               color={alternating ? 'white' : 'black'}
-              onPress={(e) => handleSaveQuote()}
             />
+          </TouchableOpacity>
+          {!isAlreadySaved && (
+            <TouchableOpacity>
+              <Ionicons
+                name="bookmark"
+                style={styles.saveContainer}
+                size={20}
+                color={alternating ? 'white' : 'black'}
+                onPress={(e) => handleSaveQuote()}
+              />
+            </TouchableOpacity>
           )}
 
           {isAlreadySaved && (
-            <Ionicons
-              name="remove"
-              style={styles.saveContainer}
-              size={20}
-              color={alternating ? 'white' : 'black'}
-              onPress={(e) => removeSavedQuote()}
-            />
+            <TouchableOpacity>
+              <Ionicons
+                name="remove"
+                style={styles.saveContainer}
+                size={20}
+                color={alternating ? 'white' : 'black'}
+                onPress={(e) => removeSavedQuote()}
+              />
+            </TouchableOpacity>
           )}
         </View>
       </View>
@@ -86,7 +142,7 @@ export default QuotesCard;
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 170,
+    height: 180,
     borderRadius: 10,
     marginBottom: 15,
     padding: 20,
@@ -129,5 +185,8 @@ const styles = StyleSheet.create({
     height: '87%',
     justifyContent: 'center',
   },
-  saveContainer: {},
+  saveContainer: {
+    flexDirection: 'row',
+    gap: 10,
+  },
 });

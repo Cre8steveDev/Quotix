@@ -13,7 +13,7 @@ import {
   arrayRemove,
 } from 'firebase/firestore';
 import { Alert } from 'react-native';
-import { savedQuotesProp } from '@/types/types';
+import { QuotesData } from '@/types/types';
 
 // Function to sign up a new user
 export const signUp = async (
@@ -97,11 +97,12 @@ export const logoutUser = async (setUser: (user: null) => Promise<void>) => {
 // Update user with quote on the Database
 export const addQuoteToFirestore = async (
   userId: string,
-  quote: savedQuotesProp
+  quote: QuotesData
 ) => {
   try {
     const userRef = doc(firestore, 'users', userId);
-    await updateDoc(userRef, {
+
+    const result = await updateDoc(userRef, {
       savedQuotes: arrayUnion(quote),
     });
     return { success: true, message: 'Quote successfully stored.' };
@@ -116,7 +117,7 @@ export const addQuoteToFirestore = async (
 // Remove selected quote from the database
 export const removeQuoteFromFirestore = async (
   userId: string,
-  quote: savedQuotesProp
+  quote: QuotesData
 ) => {
   try {
     const userRef = doc(firestore, 'users', userId);

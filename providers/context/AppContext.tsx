@@ -52,7 +52,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const removeQuoteFromLocalState = async (quote: QuotesData) => {
     const newFilteredState = {
       ...state,
-      savedQuotes: state.savedQuotes.filter((q) => q !== quote),
+      savedQuotes: state.savedQuotes.filter((q) => q._id !== quote._id),
     };
     setState(newFilteredState);
     await persistState(newFilteredState);

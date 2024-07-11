@@ -25,7 +25,7 @@ const LogOutRoute = () => {
   }, [setUser, router]);
 
   // Return Activity indicator while logout process ongoing
-  return <ActivityIndicatorComp />;
+  return <ActivityIndicatorComp text="Logging out..." />;
 };
 
 export default LogOutRoute;

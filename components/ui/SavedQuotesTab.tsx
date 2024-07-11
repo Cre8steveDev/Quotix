@@ -7,27 +7,49 @@ import axios from 'axios';
 import { QuotesData } from '@/types/types';
 import QuotesCard from './QuotesCard';
 import { useAppContext } from '@/providers/context/AppContext';
+import ActivityIndicatorComp from '../ActivityIndicatorComp';
+import EmptyQuotesList from './EmptyQuotesList';
 
 const SavedQuotesTab = () => {
   const [quotes, setQuotes] = useState<QuotesData[] | null>(null);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { state } = useAppContext();
 
   useEffect(() => {
-    setError(false);
+    setLoading(true);
+
     try {
       // Retrieve Saved Quotes from Local Storage
-      setQuotes(state.savedQuotes);
+      if (!state.savedQuotes) setQuotes([]);
+      if (state.savedQuotes) setQuotes(state.savedQuotes);
       // Attempt to retrieve from remote DB
+
+      // Stop loading indicator
     } catch (error) {
       setQuotes([]);
       setError(true);
+    } finally {
+      setLoading(false);
+      console.log(quotes);
     }
-  }, []);
+  }, [state.savedQuotes]);
+
+  // Return activity indicator while saved quotes loading
+  if (loading) return <ActivityIndicatorComp text="Loading Saved Quotes..." />;
+
+  // Return No Quotes have been saved Component
+  if (quotes?.length === 0)
+    return (
+      <EmptyQuotesList
+        title="Oops! 🤔"
+        message="You do not have any saved quotes at the moment. Explore the home page or Random Tab"
+      />
+    );
 
   return (
-    <View>
+    <View style={styles.container}>
       {/* Ten Skeleton Loaders For the Quotes  */}
       {!quotes &&
         !error &&
@@ -43,7 +65,7 @@ const SavedQuotesTab = () => {
       {/* Display the quotes  */}
       {quotes && quotes.length > 1 && (
         <FlatList
-          style={styles.mainContainer}
+          style={styles.listContainer}
           data={quotes}
           showsVerticalScrollIndicator={false}
           extraData={null}
@@ -52,6 +74,8 @@ const SavedQuotesTab = () => {
           keyExtractor={(item) => item._id}
           showsHorizontalScrollIndicator={false}
           ListHeaderComponent={<SavedQuotesHeader />}
+          // stickyHeaderIndices={[1]} This is used to make a particular
+          // index of an element of the list to be sticky
           renderItem={({ item, index, separators }) => (
             <QuotesCard
               key={item._id}
@@ -72,7 +96,7 @@ export default SavedQuotesTab;
 
 const SavedQuotesHeader = () => {
   return (
-    <View>
+    <View style={styles.headerContainer}>
       <Text style={styles.headingText1}>Saved Quotes</Text>
       <Text style={styles.headingText2}>
         Be inspired by quotes you saved previously. 😊
@@ -86,21 +110,29 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gray75,
     marginBottom: 15,
   },
-  mainContainer: { paddingBottom: 15 },
+
+  listContainer: { paddingBottom: 0 },
   container: {
-    backgroundColor: Colors.gray75,
+    // backgroundColor: Colors.gray75,
     borderRadius: 5,
     padding: 10,
-    marginRight: 8,
+    height: '99%',
+    width: '97%',
+    marginHorizontal: 'auto',
   },
 
   headingText1: {
     fontFamily: 'PoppinsExtraBold',
-    fontSize: 21,
+    fontSize: 32,
+    textAlign: 'center',
+    marginTop: 10,
   },
   headingText2: {
     fontSize: 14,
-    alignSelf: 'center',
+    textAlign: 'center',
+    marginTop: -10,
+    marginBottom: 15,
   },
   text: { color: Colors.darkGray },
+  headerContainer: {},
 });
