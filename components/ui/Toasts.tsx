@@ -1,58 +1,52 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Colors from '@/constants/Colors';
+import Toast from 'react-native-root-toast';
 
-type ToastProp = {
-  title?: string;
-  message?: string;
-  category?: 'info' | 'success' | 'error';
-  onClose: () => void;
-};
+// Add a Toast on screen.
 
-const Toasts = ({ title, message, category, onClose }: ToastProp) => {
-  if (category === 'success')
-    return (
-      <TouchableOpacity
-        onPress={onClose}
-        style={[styles.container, styles.success]}
-      >
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.message}>{message}</Text>
-      </TouchableOpacity>
-    );
+const useToast = (
+  message: string,
+  bgColor = Colors.primaryYellow,
+  textColor = 'black'
+) =>
+  Toast.show(message, {
+    duration: Toast.durations.SHORT,
+    position: Toast.positions.BOTTOM,
+    shadow: true,
+    animation: true,
+    hideOnPress: true,
+    delay: 0,
+    backgroundColor: bgColor,
+    textColor: textColor,
+    opacity: 0.9,
+    onShow: () => {
+      // calls on toast\`s appear animation start
+    },
+    onShown: () => {
+      // calls on toast\`s appear animation end.
+    },
+    onHide: () => {
+      // calls on toast\`s hide animation start.
+    },
+    onHidden: () => {
+      // calls on toast\`s hide animation end.
+    },
+  });
 
-  if (category === 'error')
-    return (
-      <TouchableOpacity onPress={onClose}>
-        <Text>{title}</Text>
-        <Text>{message}</Text>
-      </TouchableOpacity>
-    );
+export default useToast;
 
-  if (category === 'info')
-    return (
-      <TouchableOpacity onPress={onClose}>
-        <Text>{title}</Text>
-        <Text>{message}</Text>
-      </TouchableOpacity>
-    );
-};
+/**
+ * 
+ npm install react-native-root-toast
 
-export default Toasts;
+ import { RootSiblingParent } from 'react-native-root-siblings';
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 20,
-    left: 10,
-    width: '85%',
-    height: 40,
-    padding: 15,
-  },
-  success: {
-    backgroundColor: Colors.primaryYellow,
-  },
-  title: {},
-  message: {},
-});
+// in your render function 
+return (
+  <RootSiblingParent>  // <- use RootSiblingParent to wrap your root component
+    <App />
+  </RootSiblingParent>
+);
+     
+
+
+ */

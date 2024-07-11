@@ -8,7 +8,9 @@ import {
   addQuoteToFirestore,
   removeQuoteFromFirestore,
 } from '@/providers/firebase/firebaseFunctions';
-import Toasts from './Toasts';
+import useToast from './Toasts';
+
+import * as Clipboard from 'expo-clipboard';
 
 const QuotesCard = ({
   _id,
@@ -30,15 +32,14 @@ const QuotesCard = ({
     try {
       await addQuoteToLocalState(quoteObj);
     } catch (error) {
-      Alert.alert('Error Saving Quote to Local Storage');
+      useToast('Error Saving Quote to Local Storage', '#ff6666', 'white');
     }
     // Store Quote to FireStore Database for remote access
     try {
       const response = await addQuoteToFirestore(state.user.uid, quoteObj);
       if (!response.success) throw new Error();
     } catch (error) {
-      Alert.alert('Error Saving Quote to Remote Storage');
-      console.log(error);
+      useToast('Error Saving Quote to Remote Storage', '#ff6666', 'white');
     }
   };
 
@@ -49,7 +50,7 @@ const QuotesCard = ({
       console.log('Removing from local State');
       await removeQuoteFromLocalState(quoteObj);
     } catch (error) {
-      Alert.alert('Error Saving Quote to Local Storage');
+      useToast('Error Removing Quote to Remote Storage', '#ff6666', 'white');
     }
     // Remove quote from FireStore Database
     try {
@@ -62,8 +63,13 @@ const QuotesCard = ({
   };
 
   // Copy the quote Content and Author to Clipboard
-  const handleCopyToClipBoard = () => {
-    console.log('Copied');
+  const handleCopyToClipBoard = async () => {
+    try {
+      await Clipboard.setStringAsync(`${content} - ${author}`);
+      useToast(`Quote by ${author} copied.`);
+    } catch (error) {
+      useToast('Error Copying to Clipboard', 'red', 'white');
+    }
   };
 
   // Return JSX
@@ -108,6 +114,8 @@ const QuotesCard = ({
               color={alternating ? 'white' : 'black'}
             />
           </TouchableOpacity>
+
+          {/* Show button to save to local */}
           {!isAlreadySaved && (
             <TouchableOpacity>
               <Ionicons
@@ -115,7 +123,7 @@ const QuotesCard = ({
                 style={styles.saveContainer}
                 size={20}
                 color={alternating ? 'white' : 'black'}
-                onPress={(e) => handleSaveQuote()}
+                onPress={async (e) => await handleSaveQuote()}
               />
             </TouchableOpacity>
           )}
@@ -127,7 +135,7 @@ const QuotesCard = ({
                 style={styles.saveContainer}
                 size={20}
                 color={alternating ? 'white' : 'black'}
-                onPress={(e) => removeSavedQuote()}
+                onPress={async (e) => await removeSavedQuote()}
               />
             </TouchableOpacity>
           )}

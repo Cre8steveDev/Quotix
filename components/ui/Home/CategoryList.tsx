@@ -63,7 +63,7 @@ const CategoryList = () => {
           showsHorizontalScrollIndicator={false}
           //   onEndReached={() => Alert.alert('End of List Reached.')}
           renderItem={({ item, index, separators }) => (
-            <Link href={`/modal?quoteId=${item._id}`} style={styles.container}>
+            <Link href={`/Random?tag=${item.slug}`} style={styles.container}>
               <View>
                 <Text style={styles.text}>{item.name}</Text>
               </View>

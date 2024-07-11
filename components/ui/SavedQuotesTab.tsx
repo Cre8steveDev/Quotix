@@ -16,6 +16,7 @@ const SavedQuotesTab = () => {
   const [loading, setLoading] = useState(false);
 
   const { state } = useAppContext();
+  console.log(state.savedQuotes);
 
   useEffect(() => {
     setLoading(true);
@@ -40,11 +41,11 @@ const SavedQuotesTab = () => {
   if (loading) return <ActivityIndicatorComp text="Loading Saved Quotes..." />;
 
   // Return No Quotes have been saved Component
-  if (quotes?.length === 0)
+  if (!state.savedQuotes || (quotes && quotes?.length <= 1))
     return (
       <EmptyQuotesList
         title="Oops! 🤔"
-        message="You do not have any saved quotes at the moment. Explore the home page or Random Tab"
+        message="You do not have any saved quotes at the moment. Explore the Home or Random Tab"
       />
     );
 
