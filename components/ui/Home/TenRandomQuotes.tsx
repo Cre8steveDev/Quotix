@@ -5,6 +5,7 @@ import {
   TouchableHighlight,
   FlatList,
   View,
+  Button,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import SkeletonLoader from '../SkeletonLoader';
@@ -17,29 +18,41 @@ import { QuotesData } from '@/types/types';
 import QuotesCard from '../QuotesCard';
 import CategoryList from './CategoryList';
 
+import useToast from '../Toasts';
+import EmptyQuotesList from '../EmptyQuotesList';
+
 const TenRandomQuotesList = () => {
   const [quotes, setQuotes] = useState<QuotesData[] | null>(null);
   const [error, setError] = useState(false);
+  const [reload, setReload] = useState(false);
 
-  useEffect(() => {
+  // Function to get quotes
+  const handleFetchTenQuotes = () => {
     setError(false);
 
-    axios
-      .get(GET_TEN_RANDOM_QUOTES)
-      .then((response) => {
-        setQuotes(response.data.slice(0, 10));
+    // Perform fetch
+    fetch(GET_TEN_RANDOM_QUOTES, { method: 'GET' })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setQuotes(data);
+        setError(false);
       })
       .catch((error) => {
-        setQuotes([]);
+        useToast('There was an error Fetching Quotes.', 'red', 'white');
         setError(true);
-        console.log('Error Occurred', error);
       });
+  };
+
+  useEffect(() => {
+    handleFetchTenQuotes();
   }, []);
 
   return (
     <View>
       {/* Ten Skeleton Loaders For the Quotes  */}
-      {!quotes &&
+      {quotes === null &&
         !error &&
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
           <SkeletonLoader
@@ -49,9 +62,25 @@ const TenRandomQuotesList = () => {
             style={styles.skeleton}
           />
         ))}
+      {error && (
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+          }}
+        >
+          <Text style={styles.errorText}>Error getting Data.</Text>
+          <Button
+            title="Tap to Try Again. 🫣"
+            color={Colors.primaryYellow}
+            onPress={() => handleFetchTenQuotes()}
+          />
+        </View>
+      )}
 
       {/* Display the quotes  */}
-      {quotes && quotes.length > 1 && (
+      {quotes && (
         <FlatList
           style={styles.mainContainer}
           data={quotes}
@@ -102,4 +131,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   text: { color: Colors.darkGray },
+  errorText: {
+    fontSize: 24,
+    fontFamily: 'PoppinsBold',
+    marginBottom: 10,
+  },
+  errorBtn: {},
 });

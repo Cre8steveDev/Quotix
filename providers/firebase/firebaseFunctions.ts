@@ -77,7 +77,6 @@ export const signIn = async (
 
     return { success: true, message: 'Login successful' };
   } catch (error) {
-    console.log(error);
     return { success: false, message: 'Invalid Login Credentials 🫠' };
   }
 };
@@ -119,9 +118,6 @@ export const removeQuoteFromFirestore = async (
   userId: string,
   quoteToRemove: QuotesData
 ) => {
-  console.log('User ID:', userId);
-  console.log('Quote to remove:', quoteToRemove);
-
   try {
     const userRef = doc(firestore, 'users', userId);
 
@@ -165,18 +161,14 @@ export const getCurrentUserData = async () => {
       const userDocSnap = await getDoc(userDocRef);
 
       if (userDocSnap.exists()) {
-        console.log(userDocSnap.data());
         return userDocSnap.data();
       } else {
-        console.log('No such document!');
         return null;
       }
     } catch (error) {
-      console.error('Error getting user data:', error);
       return null;
     }
   } else {
-    console.log('No user is signed in');
     return null;
   }
 };

@@ -9,7 +9,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [state, setState] = useState<AppState>({
     user: null,
-    savedQuotes: [],
+    savedQuotes: null,
   });
 
   // Load persisted state when the app starts
@@ -46,16 +46,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Store Selected Quote To Local Storage
   const addQuoteToLocalState = async (quote: QuotesData) => {
-    const newState = {
-      ...state,
-      savedQuotes: [...state.savedQuotes, quote],
-    };
+    let newState: AppState;
+    if (!state.savedQuotes) {
+      newState = {
+        ...state,
+        savedQuotes: [quote],
+      };
+    } else {
+      newState = {
+        ...state,
+        savedQuotes: [...state.savedQuotes, quote],
+      };
+    }
     setState(newState);
     await persistState(newState);
   };
 
   // Remove Selected Quote From Local Storage
   const removeQuoteFromLocalState = async (quote: QuotesData) => {
+    if (!state.savedQuotes) return;
     const newFilteredState = {
       ...state,
       savedQuotes: state.savedQuotes.filter((q) => q._id !== quote._id),

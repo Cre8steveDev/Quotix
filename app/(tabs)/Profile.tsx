@@ -11,8 +11,6 @@ const Profile = () => {
   const { state } = useAppContext();
   const user = auth.currentUser;
 
-  // User state
-  console.log(state.user);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -27,7 +25,9 @@ const Profile = () => {
         <View style={styles.headingContainer}>
           <Text style={styles.subHeading}>Saved Quotes</Text>
           <Text style={styles.quoteNumber}>
-            {state.savedQuotes.length.toString().padStart(2, '0')}
+            {state.savedQuotes
+              ? state.savedQuotes.length.toString().padStart(2, '0')
+              : '00'}
           </Text>
         </View>
       </View>

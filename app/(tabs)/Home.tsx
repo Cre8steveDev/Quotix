@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -18,11 +18,10 @@ const Home = () => {
 
   // Handle Search
   const handleSearch = (text: string) => {
-    if (searchText.length < 3) return;
-    const cleanText = searchText.trim().toLowerCase();
+    if (text.length < 3) return;
+    const cleanText = text.trim().toLowerCase();
     router.push(`/(tabs)/Random?search=${cleanText}`);
   };
-  console.log(state);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -39,7 +38,6 @@ const Home = () => {
         />
 
         {/* Component that renders Category List */}
-
         {/* Component that renders the Top Ten Routes */}
         <TenRandomQuotesList />
       </View>

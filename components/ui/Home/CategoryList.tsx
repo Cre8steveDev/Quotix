@@ -32,7 +32,6 @@ const CategoryList = () => {
       .catch((error) => {
         // setLists([]);
         setLists(null);
-        console.log('Error Occurred', error);
       });
   }, []);
 

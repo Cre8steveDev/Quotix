@@ -23,7 +23,11 @@ const QuotesCard = ({
     useAppContext();
 
   const alternating = index % 2 === 0;
-  const isAlreadySaved = state.savedQuotes.find((quote) => quote._id === _id);
+  let isAlreadySaved: QuotesData | undefined = undefined;
+
+  if (state.savedQuotes)
+    isAlreadySaved = state.savedQuotes.find((quote) => quote._id === _id);
+
   const quoteObj = { _id, content, author, tags, index };
 
   // Save Quote Function
@@ -59,8 +63,7 @@ const QuotesCard = ({
       );
       if (!response.success) throw new Error();
     } catch (error) {
-      Alert.alert('Error Removing Quote from Remote Storage');
-      console.log(error);
+      useToast('Error Removing Quote from Remote Storage', 'red', 'white');
     }
   };
 

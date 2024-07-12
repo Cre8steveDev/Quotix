@@ -10,15 +10,16 @@ import { useAppContext } from '@/providers/context/AppContext';
 import ActivityIndicatorComp from '../ActivityIndicatorComp';
 import EmptyQuotesList from './EmptyQuotesList';
 import { getCurrentUserData } from '@/providers/firebase/firebaseFunctions';
+import useToast from './Toasts';
 
 const SavedQuotesTab = () => {
-  // const [quotes, setQuotes] = useState<QuotesData[] | null>(null);
-  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { state, setState } = useAppContext();
-  console.log(state.savedQuotes);
 
+  // Kindda weird that I'm preferring loading
+  // saved quotes from remote, when I'm also
+  // Persisting it on mobile storage. But allow lol
   useEffect(() => {
     setLoading(true);
 
@@ -26,20 +27,20 @@ const SavedQuotesTab = () => {
       // Attempt to retrieve from remote DB
       getCurrentUserData().then((res) => {
         if (res) {
-          console.log('TaTATATATATTATATATATATAt');
           setState((prev) => ({ ...prev, savedQuotes: res.savedQuotes }));
         }
       });
     } catch (error) {
       setState((prev) => ({ ...prev, savedQuotes: [] }));
-      setError(true);
+      useToast('Sorry. There was an error saved quote.', 'red', 'white');
     } finally {
       setLoading(false);
     }
   }, []);
 
   // Return activity indicator while saved quotes loading
-  if (loading) return <ActivityIndicatorComp text="Loading Saved Quotes..." />;
+  if (loading || !state.savedQuotes)
+    return <ActivityIndicatorComp text="Loading Saved Quotes..." />;
 
   // Return No Quotes have been saved Component
   if (state.savedQuotes.length === 0)

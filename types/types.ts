@@ -52,7 +52,7 @@ export type CustomSubmitBtnProp = {
 
 export type AppState = {
   user: any | null;
-  savedQuotes: QuotesData[];
+  savedQuotes: QuotesData[] | null;
 };
 
 export type AppContextProps = {

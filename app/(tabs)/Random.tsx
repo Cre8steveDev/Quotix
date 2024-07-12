@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '@/constants/Colors';
 import { auth } from '@/providers/firebase/firebaseConfig';
-import { useLocalSearchParams } from 'expo-router';
+import { Redirect, useLocalSearchParams } from 'expo-router';
 import { QuotesData } from '@/types/types';
 import axios from 'axios';
 import QuotesCard from '@/components/ui/QuotesCard';
@@ -31,41 +31,44 @@ const Random = () => {
   const { tag, search } = useLocalSearchParams();
 
   if (!user) {
-    return (
-      <SafeAreaView style={styles.loading}>
-        <ActivityIndicator
-          size="large"
-          color={Colors.primaryYellow}
-          style={styles.indicator}
-        />
-        <Text>Loading...</Text>
-      </SafeAreaView>
-    );
+    return <Redirect href={'/(auth)/Login'} />;
   }
 
   // Fetch Quotes based on Tag
   const handleFetchByTag = async () => {
-    const response = await axios.get(
-      `https://api.quotable.io/quotes/random?tags=${tag}&limit=20`
-    );
-    setQuotes(response.data);
-    setRefreshing(false);
+    try {
+      const response = await axios.get(
+        `https://api.quotable.io/quotes/random?tags=${tag}&limit=20`
+      );
+      setQuotes(response.data);
+      setRefreshing(false);
+    } catch (error: any) {
+      throw new Error(error?.message);
+    }
   };
   // Fetch Random Quotes based on search query
   const handleFetchBySearch = async () => {
-    const response = await axios.get(
-      `https://api.quotable.io/quotes/random?query=${search}&limit=20`
-    );
-    setQuotes(response.data);
-    setRefreshing(false);
+    try {
+      const response = await axios.get(
+        `https://api.quotable.io/quotes/random?query=${search}&limit=20`
+      );
+      setQuotes(response.data);
+      setRefreshing(false);
+    } catch (error: any) {
+      throw new Error(error?.message);
+    }
   };
   // Fetch Random Data when no query params
   const handleNormalFetch = async () => {
-    const response = await axios.get(
-      `https://api.quotable.io/quotes/random?limit=20`
-    );
-    setQuotes(response.data);
-    setRefreshing(false);
+    try {
+      const response = await axios.get(
+        `https://api.quotable.io/quotes/random?limit=20`
+      );
+      setQuotes(response.data);
+      setRefreshing(false);
+    } catch (error: any) {
+      throw new Error(error?.message);
+    }
   };
 
   //  Handle Refresh of the list
@@ -80,7 +83,6 @@ const Random = () => {
   useEffect(() => {
     setLoading(true);
     setError(false);
-    setQuotes([]);
 
     try {
       if (tag) {
@@ -92,21 +94,19 @@ const Random = () => {
       } else {
         handleNormalFetch();
       }
+      setLoading(false);
     } catch (error) {
       useToast('An Error occured trying to fetch quotes.', 'red', 'white');
       setError(true);
-    } finally {
       setLoading(false);
     }
   }, [tag, search]);
 
-  //  Return JSX to View
   // Return activity indicator while quotes loading
-  if (loading && quotes === null)
-    return <ActivityIndicatorComp text="Loading Quotes..." />;
+  if (!quotes) return <ActivityIndicatorComp text="Loading Quotes..." />;
 
   // Return No Quotes have been saved Component
-  if ((quotes && quotes.length < 1) || error)
+  if (quotes && quotes.length < 1)
     return (
       <EmptyQuotesList title="Errrm🤕" message="Nothing to Show here yet." />
     );

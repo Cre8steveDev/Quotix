@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import wc from '@/constants/WelcomeScreenAction';
 
 import WelcomeScreen from '@/components/WelcomeScreen';
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import { useAppContext } from '@/providers/context/AppContext';
 import { auth } from '@/providers/firebase/firebaseConfig';
 
@@ -15,31 +15,13 @@ const Index = () => {
 
   // Get User Data and Auth Status for
   // Redirecting to Home Page if auth
-  // has expired.
+  // is valid or user is in state
   const { state } = useAppContext();
   const user = auth.currentUser;
 
-  // Introduce a local state to help handle conditional
-  // Navigation for when the user's data is stored in DB
-  const [shouldNavigate, setShouldNavigate] = useState(false);
-
-  useEffect(() => {
-    if (state.user && user) {
-      setShouldNavigate(true);
-    } else {
-      setShouldNavigate(false);
-    }
-  }, [state.user]);
-
-  // When the component mounts and the auth status
-  // of the user is valid, or if
-  // the user is coming from a forward page then redirect to Home Page.
-  useEffect(() => {
-    if (shouldNavigate || user) {
-      router.dismissAll();
-      router.replace('/(tabs)/Home');
-    }
-  }, [shouldNavigate, router]);
+  if (user || state.user) {
+    return <Redirect href={'/(tabs)/Home'} />;
+  }
 
   // Return the Welcome Screen when app loads
   return (

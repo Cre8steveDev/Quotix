@@ -1,5 +1,5 @@
 import useAuthState from '@/providers/firebase/useAuthState';
-import { Stack, useRouter } from 'expo-router';
+import { Redirect, Stack, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
 function AuthLayout() {
@@ -8,12 +8,7 @@ function AuthLayout() {
   const { userAuthState, loading } = useAuthState();
   const router = useRouter();
 
-  useEffect(() => {
-    if (userAuthState) {
-      router.dismissAll();
-      return router.replace('/(tabs)/Home');
-    }
-  }, [userAuthState]);
+  if (userAuthState) return <Redirect href={'/(tabs)/Home'} />;
 
   return (
     <Stack>
