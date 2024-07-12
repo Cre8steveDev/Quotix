@@ -2,7 +2,7 @@ export default [
   {
     imageURI: require('../assets/images/screen01.png'),
     content:
-      'Welcome to Quote Master! Discover daily doses of inspiration to uplift your spirit and motivate you to achieve greatness. Let the power of words guide you on your journey.',
+      'Welcome to Quotix! Discover daily doses of inspiration to uplift your spirit and motivate you to achieve greatness. Let the power of words guide you on your journey.',
   },
   {
     imageURI: require('../assets/images/screen02.png'),

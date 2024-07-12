@@ -43,7 +43,7 @@ const Random = () => {
       setQuotes(response.data);
       setRefreshing(false);
     } catch (error: any) {
-      throw new Error(error?.message);
+      useToast('An Error occured trying to fetch quotes.', 'red', 'white');
     }
   };
   // Fetch Random Quotes based on search query
@@ -55,7 +55,7 @@ const Random = () => {
       setQuotes(response.data);
       setRefreshing(false);
     } catch (error: any) {
-      throw new Error(error?.message);
+      useToast('An Error occured trying to fetch quotes.', 'red', 'white');
     }
   };
   // Fetch Random Data when no query params
@@ -67,7 +67,7 @@ const Random = () => {
       setQuotes(response.data);
       setRefreshing(false);
     } catch (error: any) {
-      throw new Error(error?.message);
+      useToast('An Error occured trying to fetch quotes.', 'red', 'white');
     }
   };
 
@@ -94,19 +94,19 @@ const Random = () => {
       } else {
         handleNormalFetch();
       }
-      setLoading(false);
     } catch (error) {
-      useToast('An Error occured trying to fetch quotes.', 'red', 'white');
       setError(true);
+    } finally {
       setLoading(false);
     }
   }, [tag, search]);
 
   // Return activity indicator while quotes loading
-  if (!quotes) return <ActivityIndicatorComp text="Loading Quotes..." />;
+  if (!quotes && loading)
+    return <ActivityIndicatorComp text="Loading Quotes..." />;
 
   // Return No Quotes have been saved Component
-  if (quotes && quotes.length < 1)
+  if ((quotes && quotes.length < 1) || !quotes)
     return (
       <EmptyQuotesList title="Errrm🤕" message="Nothing to Show here yet." />
     );

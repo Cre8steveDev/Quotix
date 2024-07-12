@@ -11,6 +11,14 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_APIKEY": "AIzaSyDxx8ZfLgXpNKkepUKYh71y_JtKTuFaMgo",
+        "EXPO_PUBLIC_AUTHDOMAIN": "quotix-9324d.firebaseapp.com",
+        "EXPO_PUBLIC_PROJECTID": "quotix-9324d",
+        "EXPO_PUBLIC_STORAGEBUCKET": "quotix-9324d.appspot.com",
+        "EXPO_PUBLIC_MESSAGINGSENDERID": "414067682739",
+        "EXPO_PUBLIC_APPID": "1:414067682739:web:04bc5bc029e78a162bafc6"
       }
     },
     "production": {}
